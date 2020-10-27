@@ -77,5 +77,13 @@ docker run --rm -it \
   -w /home/platformio/MarlinFirmware \
   local/platformio platformio run
 
-echo "If the output above reported SUCCESS, you can now find the firmware in the following folder"
-echo "./MarlinFirmware/.pio/build/$(cat $(PWD)/CustomConfiguration/board)"
+success=$?
+
+if [[ ${success} -eq 0 ]]; then
+    echo "Build succeeded! Moving latest firmware to build folder ["$(pwd)/build/$(cat $(pwd)/CustomConfiguration/board)/"]"
+    mkdir -p "$(pwd)/build/$(cat $(pwd)/CustomConfiguration/board)"
+    cp "./MarlinFirmware/.pio/build/$(cat $(pwd)/CustomConfiguration/board)/firmware.bin" "$(pwd)/build/$(cat $(pwd)/CustomConfiguration/board)/$(date '+%Y-%m-%d')-firmware.bin"
+else
+    echo "Build failed! please check output for what went wrong."
+    exit 1
+fi
